@@ -82,7 +82,14 @@ class AppleAccessToken extends AccessToken
      */
     protected function getAppleKey()
     {
-        return JWK::parseKeySet(file_get_contents('https://appleid.apple.com/auth/keys'));
+	$client = new \GuzzleHttp\Client();
+        $request = $client->get('https://appleid.apple.com/auth/keys');
+        $response = $request->getBody();
+
+        if($response){
+            return JWK::parseKeySet(json_decode($response, true));
+        }
+        return false;
     }
 
     /**
